@@ -1,0 +1,55 @@
+// Library Blynk
+#define BLYNK_TEMPLATE_ID "YourTemplateID"
+#define BLYNK_DEVICE_NAME "YourDeviceName"
+#define BLYNK_AUTH_TOKEN "YourAuthToken"
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+
+// Koneksi WiFi
+char ssid[] = "YourWiFiSSID";
+char pass[] = "YourWiFiPassword";
+
+// Pin yang digunakan
+const int soilMoisturePin = 34; // Pin ADC untuk sensor kelembaban tanah
+const int relayPin = 25;       // Pin untuk relay yang mengontrol pompa
+
+// Ambang batas kelembaban
+const int moistureThreshold = 400; // Ubah sesuai kebutuhan (nilai ADC)
+
+// Variabel untuk data kelembaban
+int soilMoistureValue;
+
+void setup() {
+  // Inisialisasi Serial
+  Serial.begin(115200);
+
+  // Inisialisasi Blynk
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+
+  // Inisialisasi pin
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, HIGH); // Matikan pompa di awal
+}
+
+void loop() {
+  // Jalankan fungsi Blynk
+  Blynk.run();
+
+  // Baca nilai kelembaban tanah
+  soilMoistureValue = analogRead(soilMoisturePin);
+  Serial.print("Soil Moisture: ");
+  Serial.println(soilMoistureValue);
+
+  // Kirim data ke Blynk
+  Blynk.virtualWrite(V1, soilMoistureValue); // Kirim nilai kelembaban ke Virtual Pin V1
+
+  // Kontrol penyiraman otomatis
+  if (soilMoistureValue < moistureThreshold) {
+    digitalWrite(relayPin, LOW); // Hidupkan pompa
+    Blynk.notify("Penyiraman otomatis aktif!");
+  } else {
+    digitalWrite(relayPin, HIGH); // Matikan pompa
+  }
+
+  delay(2000); // Delay untuk mengurangi frekuensi pembacaan sensor
+}
