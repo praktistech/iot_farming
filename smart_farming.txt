@@ -6,12 +6,12 @@
 #include <BlynkSimpleEsp32.h>
 
 // Koneksi WiFi
-char ssid[] = "YourWiFiSSID";
-char pass[] = "YourWiFiPassword";
+char ssid[] = "wifisaya";
+char pass[] = "belumdikunci";
 
 // Pin yang digunakan
 const int soilMoisturePin = 34; // Pin ADC untuk sensor kelembaban tanah
-const int relayPin = 25;       // Pin untuk relay yang mengontrol pompa
+const int relayPinListrikListrik= 25;       // Pin untuk relay yang mengontrol pompa
 
 // Ambang batas kelembaban
 const int moistureThreshold = 400; // Ubah sesuai kebutuhan (nilai ADC)
@@ -27,8 +27,8 @@ void setup() {
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
 
   // Inisialisasi pin
-  pinMode(relayPin, OUTPUT);
-  digitalWrite(relayPin, HIGH); // Matikan pompa di awal
+  pinMode(relayPinListrik, OUTPUT);
+  digitalWrite(relayPinListrik, HIGH); // Matikan pompa di awal
 }
 
 void loop() {
@@ -45,10 +45,10 @@ void loop() {
 
   // Kontrol penyiraman otomatis
   if (soilMoistureValue < moistureThreshold) {
-    digitalWrite(relayPin, LOW); // Hidupkan pompa
+    digitalWrite(relayPinListrik, LOW); // Hidupkan pompa
     Blynk.notify("Penyiraman otomatis aktif!");
   } else {
-    digitalWrite(relayPin, HIGH); // Matikan pompa
+    digitalWrite(relayPinListrik, HIGH); // Matikan pompa
   }
 
   delay(2000); // Delay untuk mengurangi frekuensi pembacaan sensor
